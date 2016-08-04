@@ -4,3 +4,4 @@ An open world head-to-head tank fight with simple AI, terrain and advanced contr
 ---
 ## Lecture List
 * BE01 Section Introduction
+* BE02 Game Design Document(GDD)
