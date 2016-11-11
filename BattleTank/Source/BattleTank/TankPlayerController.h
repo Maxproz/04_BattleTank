@@ -14,7 +14,7 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
-public:
+private:
     void BeginPlay() override;
     
     void Tick(float DeltaTime) override;
@@ -25,7 +25,14 @@ public:
     // - hit where the crosshair intersects in the world
     void AimTowardsCrosshair();
     
-private:
     // Return an OUT parameter, true if hit landscape
     bool GetSightRayHitLocation(FVector& HitLocation) const;
+    
+    UPROPERTY(EditAnywhere)
+    float CrosshairXLocation = 0.5f;
+    
+    UPROPERTY(EditAnywhere)
+    float CrosshairYLocation = 0.3333f;
+    
+    bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
 };
