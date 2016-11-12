@@ -43,6 +43,6 @@ void ATank::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 
 void ATank::AimAt(FVector HitLocation)
 {
-    TankAimComponent->AimAt(HitLocation);
+    TankAimComponent->AimAt(HitLocation, LaunchSpeed);
 }
 
