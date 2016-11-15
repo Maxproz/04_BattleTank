@@ -4,11 +4,6 @@
 #include "Tank.h"
 #include "TankPlayerController.h"
 
-
-// Tick
-    // Super
-
-
 void ATankPlayerController::BeginPlay()
 {
     Super::BeginPlay();
