@@ -13,8 +13,29 @@ UTankAimComponent::UTankAimComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	bWantsBeginPlay = true;
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 	// ...
+}
+
+void UTankAimComponent::BeginPlay()
+{
+    LastFireTime = FPlatformTime::Seconds();
+}
+
+void UTankAimComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+    if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds)
+    {
+        FiringState = EFiringState::Reloading;
+    }
+    else if (IsBarrelMoving())
+    {
+        FiringState = EFiringState::Aiming;
+    }
+    else
+    {
+        FiringState = EFiringState::Locked;
+    }
 }
 
 void UTankAimComponent::Initalize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet)
@@ -44,7 +65,7 @@ void UTankAimComponent::AimAt(FVector HitLocation)
     
     if (bHaveAimSolution)
     {
-        auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+        AimDirection = OutLaunchVelocity.GetSafeNormal();
         MoveBarrelTowards(AimDirection);
     }
     // If no solution is found do nothing
@@ -65,12 +86,11 @@ void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
 
 void UTankAimComponent::Fire()
 {
-    if (!ensure(Barrel) && ProjectileBlueprint) { return; }
-    bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-    
-    if (isReloaded)
+    if (FiringState != EFiringState::Reloading)
     {
         // Spawn a projectile at the socket location on the barrel
+        if (!ensure(Barrel)) { return; }
+        if (!ensure(ProjectileBlueprint)) { return; }
         auto Projectile = GetWorld()->SpawnActor<AProjectile>
         (
             ProjectileBlueprint,
@@ -83,6 +103,12 @@ void UTankAimComponent::Fire()
     }
 }
 
+bool UTankAimComponent::IsBarrelMoving()
+{
+    if (!ensure(Barrel)) { return false; }
+    auto BarrelForward = Barrel->GetForwardVector();
+    return !BarrelForward.Equals(AimDirection, 0.01);
+}
 
 
 
