@@ -51,8 +51,7 @@ void UTankAimComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 
 void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
 {
-    // TODO: make sure this logic works with Bens
-    if (!(ensure(Barrel) || ensure(Turret))) { return; }
+    if (!ensure(Barrel) || !ensure(Turret)) { return; }
     
     // Work out difference between current barrel rotation, and AimDirection
     auto BarrelRotator = Barrel->GetForwardVector().Rotation();
